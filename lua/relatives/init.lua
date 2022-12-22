@@ -27,6 +27,7 @@ end
 
 M.select_related = function(opts)
     init_log_if_needed()
+    log.debug('Options', opts)
     local mapping = (opts and opts.mapping) or vim.g.relatives_mapping
     if (not mapping) or (#mapping == 0) then
         log.error("Mapping for relatives not defined")
