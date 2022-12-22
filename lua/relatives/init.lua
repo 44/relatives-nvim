@@ -1,14 +1,7 @@
 local M = {}
+local function noop() end
 
-local log = {
-    debug = function() end,
-    trace = function() end,
-    info = function() end,
-    warn = function() end,
-    error = function() end,
-    fatal = function() end,
-    needs_initialization = true,
-}
+local log = { debug = noop, trace = noop, info = noop, warn = noop, error = noop, fatal = noop, needs_initialization = true, }
 
 local function init_log_if_needed()
     if log.needs_initialization then
@@ -28,6 +21,9 @@ end
 M.select_related = function(opts)
     init_log_if_needed()
     log.debug('Options', opts)
+    if not opts then
+        opts = {}
+    end
     local mapping = (opts and opts.mapping) or vim.g.relatives_mapping
     if (not mapping) or (#mapping == 0) then
         log.error("Mapping for relatives not defined")
@@ -89,11 +85,8 @@ M.select_related = function(opts)
             return
         end
     end
-    if not opts then
-        opts = {}
-    end
     opts.entry_maker = relatives_maker
-    require"telescope.builtin".find_files(opts)
+    telescope.find_files(opts)
 end
 
 return M
