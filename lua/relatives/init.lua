@@ -21,11 +21,12 @@ end
 M.select_related = function(opts)
     init_log_if_needed()
     log.debug('Options', opts)
+    local mapping = (opts and opts.mapping) or vim.g.relatives_mapping
+    log.debug('Mapping', mapping)
     if not opts then
         opts = {}
     end
-    local mapping = (opts and opts.mapping) or vim.g.relatives_mapping
-    if (not mapping) or (#mapping == 0) then
+    if (mapping == nil) or (next(mapping) == nil) then
         log.error("Mapping for relatives not defined")
         if vim.g.relatives_notify then
             vim.notify("Mapping for relatives not defined", "error")
@@ -50,7 +51,7 @@ M.select_related = function(opts)
         end
         local matched = vim.fn.matchlist(current, ptrn)
         if #matched > 0 then
-            log.debug("Searching for", ptrn, ' => ', matched[2], ' => ', v)
+            log.debug("Searching for relatives of ", current, "which is", v, "according to", ptrn, ' => ', matched[2])
             for ik, iv in pairs(mapping) do
                 for ip, vp in ipairs(matched) do
                     if ip > 1 then
@@ -66,6 +67,7 @@ M.select_related = function(opts)
 
     local matchers = {}
     for k, v in pairs(resolved) do
+        log.debug("Resolved", k, v, vim.fn.glob2regpat(k))
         table.insert(matchers, vim.fn.glob2regpat(k))
     end
 
